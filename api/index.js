@@ -3,9 +3,11 @@ const cors = require('cors');
 const rateLimit = require('express-rate-limit');
 require('dotenv').config();
 
-const verifyRoutes = require('../routes/verify');
-
 const app = express();
+
+app.get('/api/ping', (req, res) => res.json({ status: 'booted' }));
+
+const verifyRoutes = require('../routes/verify');
 
 app.set('trust proxy', 1); // Required for rate limiting behind Vercel's proxy
 app.use(cors());

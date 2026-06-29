@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const crypto = require('crypto');
-const { v4: uuidv4 } = require('uuid');
 const db = require('../config/db');
 const { validateAddress } = require('../middleware/validate');
 const { verifyIndia } = require('../services/india');
@@ -13,7 +12,7 @@ const verifiers = { india: verifyIndia, usa: verifyUSA, uk: verifyUK };
 // POST /api/verify
 router.post('/verify', validateAddress, async (req, res) => {
   const startTime = Date.now();
-  const requestId = uuidv4();
+  const requestId = crypto.randomUUID();
   const { country, address } = req.body;
 
   // Create a hash of the input for cache lookup
