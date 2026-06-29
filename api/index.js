@@ -7,6 +7,7 @@ const verifyRoutes = require('../routes/verify');
 
 const app = express();
 
+app.set('trust proxy', 1); // Required for rate limiting behind Vercel's proxy
 app.use(cors());
 app.use(express.json());
 
