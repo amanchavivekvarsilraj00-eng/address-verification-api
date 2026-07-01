@@ -47,15 +47,21 @@ document.addEventListener('DOMContentLoaded', () => {
             // 4. Update UI based on Address Validity
             verificationBadge.classList.remove('hidden', 'valid', 'invalid');
             
-            // Check API response format (assuming it has isVerified or verified property based on standard API practices)
-            const isVerified = result.isVerified || result.verified || result.success === true;
-            
-            if (isVerified) {
-                verificationBadge.classList.add('valid');
-                badgeText.textContent = 'Address Verified Successfully';
-            } else {
+            if (!response.ok || result.error) {
+                // If there's a server error (e.g., 500 Internal Server Error)
                 verificationBadge.classList.add('invalid');
-                badgeText.textContent = 'Invalid or Unrecognized Address';
+                badgeText.textContent = `Server Error: ${result.error || response.statusText}`;
+            } else {
+                // Check API response format
+                const isVerified = result.isVerified || result.verified || result.success === true;
+                
+                if (isVerified) {
+                    verificationBadge.classList.add('valid');
+                    badgeText.textContent = 'Address Verified Successfully';
+                } else {
+                    verificationBadge.classList.add('invalid');
+                    badgeText.textContent = 'Invalid or Unrecognized Address';
+                }
             }
             
             // 5. Continue Login Process as Requested
