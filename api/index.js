@@ -23,10 +23,8 @@ app.use('/api', limiter);
 
 app.use('/api', verifyRoutes);
 
-app.use(express.static('public'));
-
 // Health check
-app.get('/api/health', (req, res) => {
+app.get('/', (req, res) => {
   res.json({ status: 'ok', message: 'Address Verification API is running' });
 });
 
