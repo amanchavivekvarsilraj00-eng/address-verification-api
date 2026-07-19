@@ -1,0 +1,116 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Address Verification API",
+    "version": "1.0.0",
+    "description": "A highly scalable API for verifying international postal addresses.",
+    "contact": {
+      "name": "Vivek"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://address-verification-api-rho.vercel.app",
+      "description": "Production Server (Vercel)"
+    },
+    {
+      "url": "http://localhost:3000",
+      "description": "Local Development Server"
+    }
+  ],
+  "paths": {
+    "/api/countries": {
+      "get": {
+        "summary": "Get Supported Countries",
+        "description": "Returns a list of all countries currently supported by the verification engine, along with the required address fields for each.",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": true,
+                  "supported_countries": [
+                    { "code": "india", "fields": ["street", "city", "state", "pincode"] },
+                    { "code": "usa", "fields": ["street", "city", "state", "zipcode"] },
+                    { "code": "uk", "fields": ["street", "city", "postcode"] }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/verify": {
+      "post": {
+        "summary": "Verify an Address",
+        "description": "Submits an address payload to be verified by the appropriate country's postal service.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "country": {
+                    "type": "string",
+                    "example": "india",
+                    "description": "The country code (india, usa, uk)"
+                  },
+                  "address": {
+                    "type": "object",
+                    "properties": {
+                      "pincode": { "type": "string", "example": "560001" },
+                      "street": { "type": "string", "example": "M.G. Road" },
+                      "city": { "type": "string", "example": "Bangalore" }
+                    }
+                  }
+                },
+                "required": ["country", "address"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Verification result",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": true,
+                  "request_id": "123e4567-e89b-12d3-a456-426614174000",
+                  "cached": false,
+                  "country": "india",
+                  "verified": true,
+                  "confidence": 0.8,
+                  "normalized_address": {
+                    "pincode": "560001",
+                    "district": "Bangalore",
+                    "state": "Karnataka",
+                    "country": "India"
+                  },
+                  "sources": ["India Post API"]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - Invalid input data"
+          }
+        }
+      }
+    },
+    "/api/stats": {
+      "get": {
+        "summary": "Get Cache Statistics",
+        "description": "Returns statistics about the cached verifications across the database.",
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    }
+  }
+}
